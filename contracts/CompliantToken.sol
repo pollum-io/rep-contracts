@@ -48,10 +48,10 @@ contract CompliantToken is ERC20Permit, Ownable, Pausable {
     }
 
     /**
-     * @dev Removes a single address from the whitelist. The function is internal and can only be used within the contract itself or inherited contracts.
+     * @dev Removes a single address from the whitelist.
      * @param _address The address to remove from the whitelist.
      */
-    function removeFromWhitelist(address _address) internal {
+    function removeFromWhitelist(address _address) external onlyOwner {
         require(_address != address(0), "CompliantToken::INVALID_WALLET");
 
         whitelist[_address] = false;
@@ -70,10 +70,10 @@ contract CompliantToken is ERC20Permit, Ownable, Pausable {
     }
 
      /**
-     * @dev Adds a single address to the whitelist. The function is internal and can only be used within the contract itself or inherited contracts.
+     * @dev Adds a single address to the whitelist.
      * @param _address The address to add to the whitelist.
      */
-    function addToWhitelist(address _address) internal {
+    function addToWhitelist(address _address) external { // not only onwer for demo 
         require(_address != address(0), "CompliantToken::INVALID_WALLET");
 
         whitelist[_address] = true;
@@ -94,8 +94,10 @@ contract CompliantToken is ERC20Permit, Ownable, Pausable {
     function _update(
         address from,
         address to,
-        uint256 /*value*/
+        uint256 value
     ) internal virtual override {
+        super._update(from, to, value);
+
         // checks if `from` and `to` is whitelisted when transferring
         if (to != address(0)) {
             require(whitelist[to], "CompliantToken::NOT_WHITELISTED");

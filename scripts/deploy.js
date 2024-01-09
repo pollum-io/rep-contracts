@@ -28,14 +28,20 @@ async function main() {
   const crowdSale = await CrowdSale.deploy(compliantToken.address, drex,duration,openTime, releaseTime, releaseDuration, saleAmountDrex,saleAmountToken, minimumSaleAmountForClaim,fundingWallet);
   await crowdSale.deployed();
 
-  
-  //  load sale
-  await compliantToken.approve(crowdSale.address, saleAmountToken)
-  await compliantToken.mint("0xbcF268A422461cf271e928C70AB1edafD672CAf1", saleAmountToken)
-  console.log(await compliantToken.balanceOf("0xbcF268A422461cf271e928C70AB1edafD672CAf1"))
-  console.log(await compliantToken.allowance("0xbcF268A422461cf271e928C70AB1edafD672CAf1", crowdSale.address))
-  console.log(await compliantToken.owner())
-  // await crowdSale.loadSale()
+  // Approve token transfer for the crowdsale
+  let approveTx = await compliantToken.approve(crowdSale.address, saleAmountToken);
+  await approveTx.wait(); // Wait for transaction confirmation
+
+  // Set crowdsale and add to whitelist
+  let setCrowdSaleTx = await compliantToken.setCrowdSale(crowdSale.address);
+  await setCrowdSaleTx.wait(); // Wait for transaction confirmation
+
+  // Optional: Add a check here to ensure crowdsale is whitelisted
+  console.log(await compliantToken.isWhitelisted(crowdSale.address))
+
+  // Load sale
+  let loadSaleTx = await crowdSale.loadSale();
+  await loadSaleTx.wait(); // Wait for transaction confirmation
 
   // verify contracts
   // await hre.run("verify:verify", {
@@ -48,8 +54,8 @@ async function main() {
   // });
 
   // // log addresses
-  console.log("CompliantToken address:", compliantToken.address)
-  console.log("CrowdSale address:", crowdSale.address)
+  console.log("CompliantToken address:", compliantToken.address);
+  console.log("CrowdSale address:", crowdSale.address);
 
 }
 
