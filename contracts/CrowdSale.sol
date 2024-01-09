@@ -39,9 +39,6 @@ contract CrowdSale is Pausable, Ownable {
     // Timestamp when ends the claim distribution period
     uint256 public releaseEndTime;
 
-    // Amount of drex raised in wei
-    uint256 public drexRaised;
-
     // Amount of tokens sold
     uint256 public tokenSold;
 
@@ -359,7 +356,6 @@ contract CrowdSale is Pausable, Ownable {
 
         drex.safeTransferFrom(_msgSender(), address(this), _amount);
 
-        drexRaised += _amount;
         tokenSold += _tokenAmount;
         userTokensMapping[_msgSender()].tokensBought += _tokenAmount;
 
