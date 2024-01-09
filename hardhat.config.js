@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-require("@nomiclabs/hardhat-etherscan");
+require("@nomicfoundation/hardhat-verify");
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
 require("solidity-coverage");
@@ -43,7 +43,7 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      xrp: "abc"
+      xrp: "abc" // Set to an empty string or some placeholder
     },
     customChains: [
       {
@@ -51,10 +51,12 @@ module.exports = {
         chainId: 1440002,
         urls: {
           apiURL: "https://evm-sidechain.xrpl.org/api",
-          browserURL: "https://evm-sidechain.xrpl.org"
+          browserURL: "https://evm-sidechain.xrpl.org/"
         }
       }
     ]
   },
-
+  sourcify: {
+    enabled: false
+  },
 };

@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
- * @title Camada
+ * @title CompliantToken
  * @dev {ERC20} token, including:
  *
  *  - ability for holders to sign permits and save gas via one less tx on external token transfers through {ERC20Permit}
@@ -33,7 +33,9 @@ contract CompliantToken is ERC20Permit, Ownable, Pausable {
         string memory name,
         string memory symbol
     ) ERC20(name, symbol) ERC20Permit(name) Ownable(_msgSender()) {
-        _mint(_msgSender(), initialSupply);
+        whitelist[_msgSender()] = true;
+        mint(_msgSender(), initialSupply);
+        pause();
     }
 
     /**
@@ -95,9 +97,11 @@ contract CompliantToken is ERC20Permit, Ownable, Pausable {
         uint256 /*value*/
     ) internal virtual override {
         // checks if `from` and `to` is whitelisted when transferring
-        if (from != address(0) || to != address(0)) {
-            require(whitelist[from], "CompliantToken::NOT_WHITELISTED");
+        if (to != address(0)) {
             require(whitelist[to], "CompliantToken::NOT_WHITELISTED");
+        }
+         if (from != address(0)) {
+            require(whitelist[from], "CompliantToken::NOT_WHITELISTED");
         }
         if (
             paused() &&
